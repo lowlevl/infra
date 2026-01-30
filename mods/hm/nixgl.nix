@@ -4,7 +4,7 @@
   ...
 }: {
   nixpkgs.overlays = [nixgl.overlay];
-  nixGL.packages = pkgs.nixgl;
+  targets.genericLinux.nixGL.packages = pkgs.nixgl;
 
   programs.kitty.package = config.lib.nixGL.wrap pkgs.kitty;
 }

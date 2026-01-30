@@ -42,7 +42,7 @@
     enable = true;
 
     lfs.enable = true;
-    extraConfig = {
+    settings = {
       credential.helper = "store";
 
       tag.sort = "version:refname";

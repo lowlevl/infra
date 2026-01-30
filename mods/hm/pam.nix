@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   ...
 }: let
@@ -35,17 +34,13 @@ in {
 
   config = lib.mkIf (cfg.chkpwdPath != null) (
     let
-      overlay = self: super: let
-        patch = pkgs.writeText "suid-wrapper-path.patch" ''
-          It needs the SUID version during runtime, and that can't be in /nix/store/**
-          --- a/modules/pam_unix/Makefile.am
-          +++ b/modules/pam_unix/Makefile.am
-          @@ -21 +21 @@
-          -	-DCHKPWD_HELPER=\"$(sbindir)/unix_chkpwd\" \
-          +	-DCHKPWD_HELPER=\"${cfg.chkpwdPath}\" \
-        '';
+      postPatch = ''
+        substituteInPlace modules/module-meson.build \
+          --replace-fail "sbindir / 'unix_chkpwd'" "'${cfg.chkpwdPath}'"
+      '';
 
-        pam = super.linux-pam.overrideAttrs (old: {patches = [patch];});
+      overlay = self: super: let
+        pam = super.linux-pam.overrideAttrs (old: {inherit postPatch;});
       in
         lib.mergeAttrsList (lib.map (
             pkg: {"${pkg}" = super."${pkg}".override {inherit pam;};}
