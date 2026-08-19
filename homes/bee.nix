@@ -24,26 +24,10 @@
   # Enable `git-annex assistant` on startup and append it the i3status config
   home.packages = [
     pkgs.pv
-    pkgs.git-annex
 
     (config.lib.nixGL.wrap pkgs.musescore)
     (config.lib.nixGL.wrap pkgs.stremio-linux-shell)
     (pkgs.proxmark3.override {withBlueshark = true;})
-  ];
-
-  xsession.windowManager.i3.config.startup = [
-    {
-      command = "git annex assistant --autostart --notify-start --notify-finish";
-      notification = false;
-    }
-  ];
-  programs.i3status-rust.bars.bottom.blocks = [
-    {
-      block = "custom";
-      persistent = true;
-      command = "tail -f ~/Library/.git/annex/daemon.log";
-      format = "  $text.pango-str() ";
-    }
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
